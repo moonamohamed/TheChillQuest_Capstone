@@ -18,7 +18,7 @@ app.listen(3000, ()=>{
     console.log(`listening on port: ${PORT}`)
 });
 
-await mongoose.connect()
+await mongoose.connect('MONGO_URL= mongodb+srv://munamohamed2890:dudewheresmycode@mooncluster0.ouav8ua.mongodb.net/?retryWrites=true&w=majority&TheChillQuest=Mooncluster0')
 .then(()=>{
     console.log(`Connected to database`)
     app.listen(PORT, ()=>{
