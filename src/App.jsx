@@ -7,12 +7,12 @@ import QuestLog from './pages/QuestLog';
 
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
       <navbar />
-
+      <Routes>
+        <Route path='/' element ={<Dashboard />} />
+      </Routes>
     </>
   )
 }
