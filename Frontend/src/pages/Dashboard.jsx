@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -15,19 +14,26 @@ export default function Dashboard() {
         }
         const fetchUser = async () => {
             try{
-                const res = await axios.get('http://localhost:3000/api/auth/me', {
+                const res = await fetch('http://localhost:3000/api/auth/me', {
                     headers: {Authorization: `Bearer ${token}`},
                 });
-                setUser(res.data);
+
+                if(!res.ok) {
+                    if(res.status === 401) {
+                    localStorage.removeItem('token');
+                    navigate('/login')
+                }
+                throw new Error('Failed to fetch user');
+            }
+
+            const data = await res.json();
+                setUser(data);
                 
             } catch(error) {
-                console.error(error);
-                if(error.response?.status === 401) {
-                    localStorage.removeItem('token');
-                    navigate('/login');
-                }
+                console.error('Fetch user error:', error.message);
             }
         };
+
             fetchUser();
         }, [navigate]);
 

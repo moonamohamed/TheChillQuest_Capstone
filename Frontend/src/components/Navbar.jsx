@@ -11,17 +11,17 @@ export default function Navbar() {
     };
 
     return (
-        <nav style={{display: 'flex', gap: '1rem', padding: '1rem'}}>
+        <nav className='navbar'>
             {token ? (
             <>
             <Link to='/'>Dashboard</Link>
-            <Link to='/quests'>Quests</Link>
-            <button onClick={logout}>Logout</button>
+            <Link to='/questlog'>QuestLog</Link>
+            <button className='nav-button' onClick={logout}>Logout</button>
             </>
             ) : (
             <>
-            <Link to='/login'>Login</Link>
-            <Link to='/register'>Register</Link>
+            <Link className='nav-link' to='/login'>Login</Link>
+            <Link className='nav-link' to='/register'>Register</Link>
             </>
             )}
         </nav >

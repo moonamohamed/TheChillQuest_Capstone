@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -14,10 +13,23 @@ export default function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:3000/api/auth/register', form);
+            const res = await fetch('http://localhost:3000/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(form)
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || 'Registration failed')
+            }
+
             navigate('/login');
         } catch (error) {
-            alert('Registration failed');
+            console.error('Registration error:', error.message);
+            alert(error.message || 'Registration failed');
         }
     };
 
@@ -27,7 +39,7 @@ export default function Register() {
             <input name="username" onChange={handleChange} placeholder='Username' required />
             <input type="password" name='password' onChange={handleChange} placeholder='Password' required />
             <input type='email' name='email' onChange={handleChange} placeholder='Email' required />
-            <button type='Submit'>Register</button>
+            <button type='submit'>Register</button>
         </form>
     );
 }

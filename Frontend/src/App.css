@@ -1,0 +1,22 @@
+.app-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+footer{
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: 2rem;
+    color: #555;
+}
