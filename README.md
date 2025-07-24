@@ -1,13 +1,5 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# TheChillQuest_Capstone
+The Chill Quest is a fun habit tracker that turns tasks in quests, rewarding you with XP: experience points and levels as you complete them. 
+It's built with React on the frontend and Node.js with MongoDB on the backend, using JWT for secure login.
+The app features a colorful, accessible design, personalized avatars, and animated XP progress bar.
+to access the dashboard/questlog, users must register and login to receive a JWT token, which is stored locally and required for protected routes.
+Future improvements may include badges, reminders, and mobile responsiveness.

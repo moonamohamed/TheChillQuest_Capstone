@@ -1,20 +1,20 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"; // import the mongoose library for schema and model creation
 
-const userSchema = new mongoose.Schema({
-    username: {
+const userSchema = new mongoose.Schema({ // define the schema for the user collection
+    username: { //unique username of the user
         type: String,
         required: true,
         unique: true
     },
-    password: {
+    password: { //hashed password for login authentication
         type: String,
         required: true
     },
-    xp: {
+    xp: { //the total XP the user has earned
         type: Number,
         default: 0
     },
-    level: {
+    level: { //the user's current level
         type: Number,
         default: 1
     },

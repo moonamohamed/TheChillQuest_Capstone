@@ -9,9 +9,10 @@ const authMiddleware = (req, res, next) => {
     try{
         const authHeader = req.headers.authorization;
     if(!authHeader) 
-        throw new Error('Missing Authorization Header');
+        return res.status(401).json({message: 'Missing Authorization Header'});
+    
 
-        const token = req.headers.authorization.split(' ')[1]
+        const token = authHeader.split(' ')[1]
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = {id: decoded.id};
         next();
@@ -22,44 +23,53 @@ const authMiddleware = (req, res, next) => {
 
 const calculateLevel = (xp) => Math.floor(xp/100) + 1;
 
-router.get('/user/:userId', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
     try{
-        const tasks = await Task.find({user: req.params.userId});
+        const tasks = await Task.find({user: req.user.id});
         res.json(tasks);
     } catch(error) {
-        console.log(error);
         res.status(400).json({message: 'Failed to fetch tasks'});
     }
 });
 
-router.post('/', async(req,res)=>{
-    console.log(req.body)
+router.post('/', authMiddleware, async(req,res)=>{
     try {
-        const task = await Task.create(req.body)
+         const {text} =req.body;
+        if(!text || text.trim().length < 1) {
+            return res.status(400).json({message: 'Task text is required'})
+        }
+
+        const task = new Task({text, user: req.user.id, completed: false
+        });
+
+        await task.save();
         res.status(200).json(task);
     } catch (error) {
-        res.status(500).json({message: error.message})
-        console.log(error.message)
+        console.log('Error creating task:', error.message)
+        res.status(500).json({message: 'Failed to create task'});
     }
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', authMiddleware, async (req, res) => {
     try {
-        console.log(' PATCH /tasks/:id')
-        const task = await Task.findById(req.params.id)
+        const task = await Task.findOne({_id: req.params.id, user: req.user.id});
+        if(!task) return res.status(404).json({message: 'Task not found or unauthorized'});
+        
         task.completed = !task.completed
         await task.save()
-        console.log(task)
+     
         res.json(task)
-    } catch (e) {
-        console.log(e)
-        res.json(e)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message: 'Failed to update task'});
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
     try{
-    await Task.findByIdAndDelete(req.params.id);
+    const task = await Task.findOneAndDelete({_id: req.params.id, user: req.user.id});
+    if(!task) return res.status(404).json({message: 'Task not found or unauthorized'});
+    
     res.status(204).end();
     } catch(error) {
         res.status(500).json({message: 'Failed to delete task'});
@@ -68,11 +78,13 @@ router.delete('/:id', async (req, res) => {
 
 router.patch('/:id/complete', authMiddleware, async (req, res) => {
     try{
-        const task = await Task.findById(req.params.id);
-        if (!task)
-            return res.status(404).json({message: 'Task not found'});
+        const task = await Task.findOne({_id: req.params.id, user: req.user.id});
+        if (!task) return res.status(404).json({message: 'Task not found'});
 
+        if(!task.completed){
         task.completed = true;
+        task.completedAt = new Date();
+        
         await task.save();
 
         const user = await User.findById(req.user.id);
@@ -85,7 +97,11 @@ router.patch('/:id/complete', authMiddleware, async (req, res) => {
             xp: user.xp,
             level: user.level
         });
-    } catch(error) {
+    } else {
+        const user = await User.findById(req.user.id);
+        return res.json({message: 'Task was already completed.', xp: user.xp, level: user.level});
+    } 
+} catch(error) {
         res.status(500).json({error: error.message});
     }
 });
